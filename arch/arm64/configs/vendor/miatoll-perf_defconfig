@@ -1,3 +1,4 @@
+# CONFIG_ZONE_DMA is not set
 CONFIG_LOCALVERSION="-QuicksilveR-miatoll"
 # CONFIG_FHANDLE is not set
 CONFIG_NO_HZ=y
