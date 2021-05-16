@@ -16,15 +16,20 @@
  *
  * A very rough approximation to the sqrt() function.
  */
-unsigned long int_sqrt(unsigned long x)
+inline unsigned long int_sqrt(unsigned long x)
 {
-	unsigned long b, m, y = 0;
+	register unsigned long b, m, y = 0;
 
 	if (x <= 1)
 		return x;
 
-	m = 1UL << (__fls(x) & ~1UL);
-	while (m != 0) {
+	m = 1UL << (BITS_PER_LONG - 2);
+
+	do {
+		m >>= 2;
+	} while (m > x);
+
+	do {
 		b = y + m;
 		y >>= 1;
 
@@ -33,7 +38,7 @@ unsigned long int_sqrt(unsigned long x)
 			y += m;
 		}
 		m >>= 2;
-	}
+	} while (m != 0);
 
 	return y;
 }
