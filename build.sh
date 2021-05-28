@@ -38,15 +38,13 @@ cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
 cp out/arch/arm64/boot/dtbo.img AnyKernel3
 rm -f *zip
 cd AnyKernel3
+rm -rf out/arch/arm64/boot
 zip -r9 "../$ZIPNAME" * -x '*.git*' README.md *placeholder
 cd ..
 rm -rf AnyKernel3
 echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
-
-cat "$ZIPNAME" | curl --upload-file "-" "http://transfer.sh/$ZIPNAME"
-
 echo "Zip: $ZIPNAME"
-rm -rf out/arch/arm64/boot
+curl --upload-file $ZIPNAME http://transfer.sh/$ZIPNAME; echo
 else
 echo -e "\nCompilation failed!"
 fi
