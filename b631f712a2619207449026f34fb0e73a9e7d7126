@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6885e5c_5524f359",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000468
+      },
+      "writtenOn": "2021-06-03T07:58:13Z",
+      "side": 1,
+      "message": "Without this, there is no point of https://github.com/AOSPA/android_kernel_xiaomi_miatoll/commit/ef08739e4ee906533ff3998e4aabf79e9aa9a021",
+      "revId": "b631f712a2619207449026f34fb0e73a9e7d7126",
+      "serverId": "3162e3d8-d894-470e-abd9-724f7b0effad"
+    }
+  ]
+}
