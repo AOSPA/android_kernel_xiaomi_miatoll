@@ -22,6 +22,12 @@ if [[ $1 = "-c" || $1 = "--clean" ]]; then
 rm -rf out
 fi
 
+if [[ $1 = "-r" || $1 = "--regen" ]]; then
+make O=out ARCH=arm64 $DEFCONFIG savedefconfig
+cp out/defconfig arch/arm64/configs/$DEFCONFIG
+exit 1;
+fi
+
 mkdir -p out
 make O=out ARCH=arm64 $DEFCONFIG
 
