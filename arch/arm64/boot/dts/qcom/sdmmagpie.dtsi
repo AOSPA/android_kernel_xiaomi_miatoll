@@ -3167,6 +3167,7 @@
 
 #include "sdmmagpie-gdsc.dtsi"
 #include "sdmmagpie-bus.dtsi"
+#include "sdmmagpie-coresight.dtsi"
 #include "sdmmagpie-qupv3.dtsi"
 #include "sdmmagpie-vidc.dtsi"
 #include "sdmmagpie-sde-pll.dtsi"
@@ -3309,7 +3310,6 @@
 #include "pm8009.dtsi"
 #include "sdmmagpie-regulator.dtsi"
 #include "sdmmagpie-camera.dtsi"
-#include "sdmmagpie-coresight.dtsi"
 #include "sdmmagpie-usb.dtsi"
 #include "sdmmagpie-thermal.dtsi"
 
