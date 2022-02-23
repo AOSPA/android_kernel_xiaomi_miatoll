@@ -36,7 +36,7 @@ make -j"$(nproc --all)" O=out ARCH=arm64 CC=clang LD=ld.lld AR=llvm-ar NM=llvm-n
 
 if [ -f "out/arch/arm64/boot/Image" ] && [ -f "out/arch/arm64/boot/dtbo.img" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
-	if ! git clone -q https://github.com/imjyotiraditya/AnyKernel3 -b miatoll; then
+	if ! git clone -q https://github.com/BladeRunner-A2C/AnyKernel3 -b miatoll; then
 		echo -e "\nCloning AnyKernel3 repo failed! Aborting..."
 		exit 1
 	fi
@@ -51,7 +51,7 @@ if [ -f "out/arch/arm64/boot/Image" ] && [ -f "out/arch/arm64/boot/dtbo.img" ]; 
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
-	curl --upload-file "$ZIPNAME" http://transfer.sh/"$ZIPNAME"
+	curl -# -F "file=@${ZIPNAME}" https://0x0.st
 	echo
 else
 	echo -e "\nCompilation failed!"
