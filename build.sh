@@ -5,7 +5,11 @@
 
 SECONDS=0 # builtin bash timer
 ZIPNAME="QuicksilveR-miatoll-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/proton-clang"
+if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
+   head=$(git rev-parse --verify HEAD 2>/dev/null); then
+        ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
+fi
+TC_DIR="$HOME/tc/clang-proton"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
 
 export PATH="$TC_DIR/bin:$PATH"
