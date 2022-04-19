@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2019, 2021, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -264,7 +264,7 @@ static int dsp_domr_notify_cb(struct notifier_block *n, unsigned long code,
 	switch (code) {
 	case SUBSYS_BEFORE_SHUTDOWN:
 	case SERVREG_NOTIF_SERVICE_STATE_DOWN_V01:
-		SLIM_INFO(dev, "SLIM DSP SSR notify cb:%lu\n", code);
+		SLIM_INFO(dev, "SLIM DSP SSR notify cb:0x%lx\n", code);
 		atomic_set(&dev->ssr_in_progress, 1);
 		/* wait for current transaction */
 		mutex_lock(&dev->tx_lock);
@@ -308,9 +308,6 @@ static int dsp_domr_notify_cb(struct notifier_block *n, unsigned long code,
 				&cur);
 		SLIM_INFO(dev, "reg-PD client:%s with service:%s\n",
 				reg->client_name, reg->service_name);
-		SLIM_INFO(dev, "reg-PD dom:%s instance:%d, cur:0x%x\n",
-			  reg->domain_list->name, reg->domain_list->instance_id,
-			  cur);
 
 		if (cur == SERVREG_NOTIF_SERVICE_STATE_UP_V01) {
 			pm_stay_awake(dev->dev);
