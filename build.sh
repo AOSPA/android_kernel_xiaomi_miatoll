@@ -9,18 +9,12 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
         ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
-TC_DIR="$HOME/tc/clang-proton"
+TC_DIR="$HOME/tc/clang-r445002"
+GCC_64_DIR="$HOME/tc/aarch64-linux-android-4.9"
+GCC_32_DIR="$HOME/tc/arm-linux-androideabi-4.9"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
 
 export PATH="$TC_DIR/bin:$PATH"
-
-if ! [ -d "$TC_DIR" ]; then
-	echo "Proton clang not found! Cloning to $TC_DIR..."
-	if ! git clone -q --depth=1 --single-branch https://github.com/kdrag0n/proton-clang "$TC_DIR"; then
-		echo "Cloning failed! Aborting..."
-		exit 1
-	fi
-fi
 
 if [[ $1 = "-c" || $1 = "--clean" ]]; then
 	rm -rf out
@@ -36,7 +30,7 @@ mkdir -p out
 make O=out ARCH=arm64 $DEFCONFIG
 
 echo -e "\nStarting compilation...\n"
-make -j"$(nproc --all)" O=out ARCH=arm64 CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- Image dtbo.img
+make -j"$(nproc --all)" O=out ARCH=arm64 HOSTCC=clang HOSTLD=ld.lld CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
 
 if [ -f "out/arch/arm64/boot/Image" ] && [ -f "out/arch/arm64/boot/dtbo.img" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
