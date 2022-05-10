@@ -100,7 +100,7 @@ if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtb
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
-	curl -# -F "file=@${ZIPNAME}" https://0x0.st
+	curl -F "file=@${ZIPNAME}" https://oshi.at
 	echo
 else
 	echo -e "\nCompilation failed!"
