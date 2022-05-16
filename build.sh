@@ -106,6 +106,7 @@ if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtb
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR AnyKernel3
+		git -C AnyKernel3 checkout miatoll &> /dev/null
 	elif ! git clone -q https://github.com/BladeRunner-A2C/AnyKernel3 -b miatoll; then
 		echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
 		exit 1
