@@ -61,6 +61,7 @@ CLANG_DIR="$TC_DIR/clang-r450784"
 SDCLANG_DIR="$TC_DIR/sdclang-14/compiler"
 GCC_64_DIR="$TC_DIR/aarch64-linux-android-4.9"
 GCC_32_DIR="$TC_DIR/arm-linux-androideabi-4.9"
+AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
 
 if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
@@ -95,8 +96,10 @@ fi
 
 if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtbo.img" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
-	if ! git clone -q https://github.com/BladeRunner-A2C/AnyKernel3 -b miatoll; then
-		echo -e "\nCloning AnyKernel3 repo failed! Aborting..."
+	if [ -d "$AK3_DIR" ]; then
+		cp -r $AK3_DIR AnyKernel3
+	elif ! git clone -q https://github.com/BladeRunner-A2C/AnyKernel3 -b miatoll; then
+		echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
 		exit 1
 	fi
 	cp $OUT_DIR/arch/arm64/boot/Image AnyKernel3
