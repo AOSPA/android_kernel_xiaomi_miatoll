@@ -4,8 +4,8 @@
 # Copyright (C) 2020-2021 Adithya R.
 
 # Setup getopt.
-long_opts="regen,clean,sdclang,homedir:,tcdir:"
-getopt_cmd=$(getopt -o rcsh:t: --long "$long_opts" \
+long_opts="regen,clean,sdclang,telegram,homedir:,tcdir:"
+getopt_cmd=$(getopt -o rcsuh:t: --long "$long_opts" \
             -n $(basename $0) -- "$@") || \
             { echo -e "\nError: Getopt failed. Extra args\n"; exit 1;}
 
@@ -16,6 +16,7 @@ while true; do
         -r|--regen|r|regen) FLAG_REGEN_DEFCONFIG=y;;
         -c|--clean|c|clean) FLAG_CLEAN_BUILD=y;;
         -s|--sdclang|s|sdclang) FLAG_SDCLANG_BUILD=y;;
+	-u|--telegram|u|telegram) FLAG_TG_UPLOAD=y;;
         -h|--homedir|h|homedir) HOME_DIR="$2"; shift;;
         -t|--tcdir|t|tcdir) TC_DIR="$2"; shift;;
         -o|--outdir|o|outdir) OUT_DIR="$2"; shift;;
@@ -89,9 +90,9 @@ make O=$OUT_DIR ARCH=arm64 $DEFCONFIG
 
 echo -e "\nStarting compilation...\n"
 if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
-make -j"$(nproc --all)" O=out ARCH=arm64 HOSTCC=$CLANG_DIR/bin/clang CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
+make -j"$(nproc --all)" O=$OUT_DIR ARCH=arm64 HOSTCC=$CLANG_DIR/bin/clang CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
 else
-make -j"$(nproc --all)" O=out ARCH=arm64 HOSTCC=clang HOSTLD=ld.lld CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
+make -j"$(nproc --all)" O=$OUT_DIR ARCH=arm64 HOSTCC=clang HOSTLD=ld.lld CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
 fi
 
 if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtbo.img" ]; then
@@ -113,7 +114,11 @@ if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtb
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
-	curl -F "file=@${ZIPNAME}" https://oshi.at
+	if [ "$FLAG_TG_UPLOAD" = 'y' ]; then
+		telegram-send --config "$HOME/telegram.conf" --file "$ZIPNAME"
+	else
+		curl -F "file=@${ZIPNAME}" https://oshi.at
+	fi
 	echo
 else
 	echo -e "\nCompilation failed!"
