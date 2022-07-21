@@ -58,11 +58,11 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
         ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
-CLANG_DIR="$TC_DIR/clang-r450784"
+CLANG_DIR="$TC_DIR/clang-r458507"
 SDCLANG_DIR="$TC_DIR/sdclang-14/compiler"
 GCC_64_DIR="$TC_DIR/aarch64-linux-android-4.9"
 GCC_32_DIR="$TC_DIR/arm-linux-androideabi-4.9"
-AK3_DIR="$HOME/android/AnyKernel3"
+AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
 
 if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
