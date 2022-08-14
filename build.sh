@@ -65,6 +65,19 @@ GCC_32_DIR="$TC_DIR/arm-linux-androideabi-4.9"
 AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
 
+MAKE_PARAMS="O=$OUT_DIR ARCH=arm64 HOSTLD=ld.lld CC=clang \
+	LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy \
+	OBJDUMP=llvm-objdump STRIP=llvm-strip \
+	CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- \
+	CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- \
+	CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img"
+
+if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
+MAKE_PARAMS+=" HOSTCC=$CLANG_DIR/bin/clang"
+else
+MAKE_PARAMS+=" HOSTCC=clang"
+fi
+
 if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
 export PATH="$SDCLANG_DIR/bin:$PATH"
 else
@@ -89,11 +102,7 @@ mkdir -p $OUT_DIR
 make O=$OUT_DIR ARCH=arm64 $DEFCONFIG
 
 echo -e "\nStarting compilation...\n"
-if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
-make -j"$(nproc --all)" O=$OUT_DIR ARCH=arm64 HOSTCC=$CLANG_DIR/bin/clang CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
-else
-make -j"$(nproc --all)" O=$OUT_DIR ARCH=arm64 HOSTCC=clang HOSTLD=ld.lld CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img
-fi
+make -j"$(nproc --all)" $MAKE_PARAMS
 
 if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtbo.img" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
