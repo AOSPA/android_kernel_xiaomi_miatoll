@@ -49,8 +49,9 @@ else
 fi
 echo -e "Out directory is at $OUT_DIR\n"
 
-export KBUILD_BUILD_USER=007
-export KBUILD_BUILD_HOST=skyfall
+
+export KBUILD_BUILD_USER=punisher
+export KBUILD_BUILD_HOST=nidavellir
 
 SECONDS=0 # builtin bash timer
 ZIPNAME="QuicksilveR-miatoll-$(date '+%Y%m%d-%H%M').zip"
@@ -58,19 +59,17 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
         ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
-CLANG_DIR="$TC_DIR/clang-r450784e"
+CLANG_DIR="$TC_DIR/clang-r450784d"
 SDCLANG_DIR="$TC_DIR/sdclang-14/compiler"
-GCC_64_DIR="$TC_DIR/aarch64-linux-android-4.9"
-GCC_32_DIR="$TC_DIR/arm-linux-androideabi-4.9"
 AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
 
-MAKE_PARAMS="O=$OUT_DIR ARCH=arm64 HOSTLD=ld.lld CC=clang \
-	LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy \
-	OBJDUMP=llvm-objdump STRIP=llvm-strip \
-	CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- \
-	CROSS_COMPILE_ARM32=$GCC_32_DIR/bin/arm-linux-androideabi- \
-	CLANG_TRIPLE=aarch64-linux-gnu- Image dtbo.img"
+MAKE_PARAMS="O=$OUT_DIR ARCH=arm64 CC=clang LLVM_IAS=1 \
+	HOSTLD=ld.lld LD=ld.lld LD_ARM32=ld.lld AR=llvm-ar NM=llvm-nm \
+	OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip \
+	CLANG_TRIPLE=aarch64-linux-gnu- \
+	CROSS_COMPILE_ARM32=arm-eabi- \
+	CROSS_COMPILE=$CLANG_DIR/bin/llvm- Image dtbo.img"
 
 if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
 MAKE_PARAMS+=" HOSTCC=$CLANG_DIR/bin/clang"
