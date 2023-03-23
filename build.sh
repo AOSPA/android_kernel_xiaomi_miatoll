@@ -4,8 +4,8 @@
 # Copyright (C) 2020-2021 Adithya R.
 
 # Setup getopt.
-long_opts="regen,clean,sdclang,telegram,homedir:,tcdir:"
-getopt_cmd=$(getopt -o rcsuh:t: --long "$long_opts" \
+long_opts="regen,clean,sdclang,homedir:,tcdir:"
+getopt_cmd=$(getopt -o rcsh:t: --long "$long_opts" \
             -n $(basename $0) -- "$@") || \
             { echo -e "\nError: Getopt failed. Extra args\n"; exit 1;}
 
@@ -16,7 +16,6 @@ while true; do
         -r|--regen|r|regen) FLAG_REGEN_DEFCONFIG=y;;
         -c|--clean|c|clean) FLAG_CLEAN_BUILD=y;;
         -s|--sdclang|s|sdclang) FLAG_SDCLANG_BUILD=y;;
-	-u|--telegram|u|telegram) FLAG_TG_UPLOAD=y;;
         -h|--homedir|h|homedir) HOME_DIR="$2"; shift;;
         -t|--tcdir|t|tcdir) TC_DIR="$2"; shift;;
         -o|--outdir|o|outdir) OUT_DIR="$2"; shift;;
@@ -122,11 +121,7 @@ if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtb
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
-	if [ "$FLAG_TG_UPLOAD" = 'y' ]; then
-		telegram-send --config "$HOME/telegram.conf" --file "$ZIPNAME"
-	else
-		curl -F "file=@${ZIPNAME}" https://oshi.at
-	fi
+	curl -F "file=@${ZIPNAME}" https://oshi.at
 	echo
 else
 	echo -e "\nCompilation failed!"
