@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Compile script for QuicksilveR kernel
-# Copyright (C) 2020-2021 Adithya R.
+# Copyright (C) 2020-2023 Adithya R.
 
 # Setup getopt.
 long_opts="regen,clean,sdclang,homedir:,tcdir:"
@@ -30,7 +30,7 @@ if [ $HOME_DIR ]; then
 else
     HOME_DIR=$HOME
 fi
-echo -e "HOME directory is at $HOME_DIR\n"
+echo -e "HOME directory is at $HOME_DIR/\n"
 
 # Setup Toolchain dir
 if [ $TC_DIR ]; then
@@ -38,7 +38,7 @@ if [ $TC_DIR ]; then
 else
     TC_DIR="$HOME_DIR/tc"
 fi
-echo -e "Toolchain directory is at $TC_DIR\n"
+echo -e "Toolchain directory is at $TC_DIR/\n"
 
 # Setup OUT dir
 if [ $OUT_DIR ]; then
@@ -46,11 +46,7 @@ if [ $OUT_DIR ]; then
 else
     OUT_DIR=out
 fi
-echo -e "Out directory is at $OUT_DIR\n"
-
-
-export KBUILD_BUILD_USER=punisher
-export KBUILD_BUILD_HOST=nidavellir
+echo -e "Out directory is at $OUT_DIR/\n"
 
 SECONDS=0 # builtin bash timer
 ZIPNAME="QuicksilveR-miatoll-$(date '+%Y%m%d-%H%M').zip"
@@ -67,8 +63,7 @@ MAKE_PARAMS="O=$OUT_DIR ARCH=arm64 CC=clang LLVM_IAS=1 \
 	HOSTLD=ld.lld LD=ld.lld LD_ARM32=ld.lld AR=llvm-ar NM=llvm-nm \
 	OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip \
 	CLANG_TRIPLE=aarch64-linux-gnu- \
-	CROSS_COMPILE_ARM32=arm-eabi- \
-	CROSS_COMPILE=$CLANG_DIR/bin/llvm- Image dtbo.img"
+	CROSS_COMPILE_ARM32=arm-eabi- CROSS_COMPILE=$CLANG_DIR/bin/llvm-"
 
 if [ "$FLAG_SDCLANG_BUILD" = 'y' ]; then
 MAKE_PARAMS+=" HOSTCC=$CLANG_DIR/bin/clang"
@@ -81,6 +76,9 @@ export PATH="$SDCLANG_DIR/bin:$PATH"
 else
 export PATH="$CLANG_DIR/bin:$PATH"
 fi
+
+export KBUILD_BUILD_USER=punisher
+export KBUILD_BUILD_HOST=endurance
 
 # Prep for a clean build, if requested so
 if [ "$FLAG_CLEAN_BUILD" = 'y' ]; then
@@ -97,10 +95,10 @@ if [ "$FLAG_REGEN_DEFCONFIG" = 'y' ]; then
 fi
 
 mkdir -p $OUT_DIR
-make O=$OUT_DIR ARCH=arm64 $DEFCONFIG
+make $MAKE_PARAMS $DEFCONFIG
 
 echo -e "\nStarting compilation...\n"
-make -j"$(nproc --all)" $MAKE_PARAMS
+make -j"$(nproc --all)" $MAKE_PARAMS Image dtbo.img 2> >(tee error.log >&2) || exit $?
 
 if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtbo.img" ]; then
 	echo -e "\nKernel compiled succesfully! Zipping up...\n"
@@ -122,8 +120,9 @@ if [ -f "$OUT_DIR/arch/arm64/boot/Image" ] && [ -f "$OUT_DIR/arch/arm64/boot/dtb
 	rm -rf AnyKernel3
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
-	curl -F "file=@${ZIPNAME}" https://oshi.at
-	echo
+	echo -e "\nUploading...\n"
+	ID=$(curl --progress-bar -T "$ZIPNAME" https://pixeldrain.com/api/file/ | cat | grep -Po '(?<="id":")[^"]*')
+	echo -e "Download URL: https://pixeldrain.com/api/file/$ID?download"
 else
 	echo -e "\nCompilation failed!"
 fi
