@@ -2,7 +2,7 @@
 # Focaltech Touchscreen driver configuration
 #
 
-config TOUCHSCREEN_FTS
+config TOUCHSCREEN_FTS_SPI
     bool "Focaltech Touchscreen"
     default n
     help
