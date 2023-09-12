@@ -49,7 +49,7 @@ fi
 echo -e "Out directory is at $OUT_DIR/\n"
 
 SECONDS=0 # builtin bash timer
-ZIPNAME="QuicksilveR-miatoll-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="QuicksilveR-miatoll-v2-$(date +"%F-%S").zip"
 if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
         ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
