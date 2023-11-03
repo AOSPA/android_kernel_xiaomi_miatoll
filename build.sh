@@ -54,7 +54,7 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
         ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
-CLANG_DIR="$TC_DIR/clang-r487747c"
+CLANG_DIR="$TC_DIR/clang-r498229b"
 SDCLANG_DIR="$TC_DIR/sdclang-14/compiler"
 AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="vendor/miatoll-perf_defconfig"
@@ -76,9 +76,6 @@ export PATH="$SDCLANG_DIR/bin:$PATH"
 else
 export PATH="$CLANG_DIR/bin:$PATH"
 fi
-
-export KBUILD_BUILD_USER=punisher
-export KBUILD_BUILD_HOST=endurance
 
 # Prep for a clean build, if requested so
 if [ "$FLAG_CLEAN_BUILD" = 'y' ]; then
